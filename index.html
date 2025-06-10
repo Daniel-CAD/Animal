@@ -3,167 +3,766 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prolog коли с правила и GIF</title>
+  <title>Prolog Intelligent Car Database</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --glass: rgba(255, 255, 255, 0.1);
+      --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 700px;
-      margin: 30px auto;
-      background: #f9f9f9;
-      color: #333;
-      padding: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+    
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .floating-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .shape:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s; }
+    .shape:nth-child(2) { width: 60px; height: 60px; top: 20%; right: 20%; animation-delay: 1s; }
+    .shape:nth-child(3) { width: 100px; height: 100px; bottom: 20%; left: 30%; animation-delay: 2s; }
+    .shape:nth-child(4) { width: 40px; height: 40px; top: 60%; right: 10%; animation-delay: 3s; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .header {
       text-align: center;
+      margin-bottom: 3rem;
+      animation: slideDown 0.8s ease-out;
     }
-    textarea {
-      width: 90%;
+    
+    .header h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 1rem;
+    }
+    
+    .header p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
       max-width: 600px;
-      height: 120px;
-      font-family: monospace;
-      font-size: 16px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 2px solid #007acc;
-      padding: 8px;
-      resize: vertical;
+      margin: 0 auto;
+      line-height: 1.6;
     }
-    button {
-      margin-top: 15px;
-      padding: 10px 25px;
-      font-size: 18px;
-      background-color: #007acc;
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .query-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideLeft 0.8s ease-out;
+    }
+    
+    .results-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideRight 0.8s ease-out;
+    }
+    
+    .panel-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .panel-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    
+    .query-examples {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .query-examples h4 {
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .example-queries {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .example-query {
+      background: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .example-query:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    textarea {
+      width: 100%;
+      height: 120px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1rem;
+      resize: vertical;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .execute-btn {
+      width: 100%;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
       border: none;
       color: white;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      position: relative;
+      overflow: hidden;
     }
-    button:hover {
-      background-color: #005f99;
+    
+    .execute-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
     }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      min-height: 30px;
-      font-weight: bold;
-      color: #004a99;
+    
+    .execute-btn:active {
+      transform: translateY(0);
     }
-    .animal-container {
-      margin-top: 30px;
-      min-height: 160px;
+    
+    .execute-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .execute-btn:hover::before {
+      left: 100%;
+    }
+    
+    .results-container {
+      min-height: 200px;
+    }
+    
+    .result-item {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--success);
+      animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .result-item.error {
+      border-left-color: var(--error);
+      background: #fef2f2;
+    }
+    
+    .result-text {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+    
+    .car-showcase {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideUp 0.8s ease-out;
+    }
+    
+    .car-display {
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #d0e8ff;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #a0c4ff;
+      min-height: 300px;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
     }
-    .animal-gif {
-      max-width: 180px;
+    
+    .car-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      transform: scale(0.9);
+      transition: all 0.5s ease;
+    }
+    
+    .car-card.active {
+      transform: scale(1);
+    }
+    
+    .car-image {
+      width: 250px;
+      height: 180px;
+      object-fit: cover;
       border-radius: 12px;
-      box-shadow: 0 0 10px #005f99;
+      margin-bottom: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .car-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .car-type {
+      display: inline-block;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    
+    .car-specs {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
+    
+    .spec-item {
+      text-align: center;
+    }
+    
+    .spec-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .spec-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .knowledge-base {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 2rem;
+    }
+    
+    .kb-content {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1.5rem;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    
+    .kb-toggle {
+      background: var(--dark);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+    
+    .kb-toggle:hover {
+      background: var(--primary);
+    }
+    
+    .hidden { display: none; }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Задание: Програма с Prolog за коли и GIF визуализация</h1>
+  <div class="background-animation">
+    <div class="floating-shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
+  </div>
 
-  <p class="instructions">
-    Въведете Prolog заявка, за да видите кола и подходяща GIF анимация.  
-    <br><br>
-    <strong>Примери на заявки:</strong><br>
-    <code>is_electric(X).</code><br>
-    <code>is_sports(X).</code><br>
-    <code>is_car(X).</code>
-  </p>
+  <div class="container">
+    <div class="header">
+      <h1>🚗 Prolog Car Intelligence</h1>
+      <p>Интелигентна база данни за автомобили с Prolog логическо програмиране</p>
+    </div>
 
-  <textarea id="prolog-input">
-% Примери на заявки:
-is_electric(X).
-is_sports(X).
-is_car(X).
-  </textarea><br />
-  <button onclick="runProlog()">Изпълни</button>
+    <div class="main-content">
+      <div class="query-panel">
+        <h2 class="panel-title">Prolog Заявки</h2>
+        
+        <div class="query-examples">
+          <h4>Примерни заявки:</h4>
+          <div class="example-queries">
+            <span class="example-query" onclick="setQuery('is_electric(X).')">is_electric(X).</span>
+            <span class="example-query" onclick="setQuery('is_sports(X).')">is_sports(X).</span>
+            <span class="example-query" onclick="setQuery('is_luxury(X).')">is_luxury(X).</span>
+            <span class="example-query" onclick="setQuery('is_suv(X).')">is_suv(X).</span>
+            <span class="example-query" onclick="setQuery('car_price(X, Price), Price > 100000.')">скъпи коли</span>
+          </div>
+        </div>
 
-  <div id="result"></div>
-  <div class="animal-container" id="animal-animation"></div>
+        <textarea id="prolog-input" placeholder="Въведете вашата Prolog заявка тук...">is_electric(X).</textarea>
+        <button class="execute-btn" onclick="runProlog()">🚀 Изпълни заявката</button>
+      </div>
 
-  <script src="https://unpkg.com/tau-prolog"></script>
+      <div class="results-panel">
+        <h2 class="panel-title">Резултати</h2>
+        <div class="results-container" id="result"></div>
+      </div>
+    </div>
+
+    <div class="car-showcase">
+      <h2 class="panel-title">Визуализация на автомобили</h2>
+      <div class="car-display" id="car-display">
+        <div class="car-card">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🚗</div>
+          <h3>Изберете заявка</h3>
+          <p>Изпълнете Prolog заявка, за да видите автомобилите</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="knowledge-base">
+      <h2 class="panel-title">База знания</h2>
+      <button class="kb-toggle" onclick="toggleKnowledgeBase()">👁️ Покажи/Скрий базата знания</button>
+      <div class="kb-content hidden" id="knowledge-base-content"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tau-prolog/0.3.2/tau-prolog.min.js"></script>
   <script>
     const session = pl.create();
 
-    // База знания за коли и правила
+    // Разширена база знания
     const knowledge = `
+% Автомобили
 car(tesla_model_s).
+car(tesla_model_3).
+car(tesla_cybertruck).
 car(ford_mustang).
+car(ford_f150).
 car(bmw_x5).
+car(bmw_i8).
 car(lamborghini_huracan).
+car(lamborghini_aventador).
 car(honda_civic).
+car(mercedes_s_class).
+car(audi_r8).
+car(porsche_911).
 
-% Електрически коли
+% Характеристики
 electric(tesla_model_s).
+electric(tesla_model_3).
+electric(tesla_cybertruck).
+electric(bmw_i8).
 
-% Спортни коли
 sports(ford_mustang).
 sports(lamborghini_huracan).
+sports(lamborghini_aventador).
+sports(bmw_i8).
+sports(audi_r8).
+sports(porsche_911).
 
-% SUV коли
+luxury(tesla_model_s).
+luxury(bmw_x5).
+luxury(lamborghini_huracan).
+luxury(lamborghini_aventador).
+luxury(mercedes_s_class).
+luxury(audi_r8).
+luxury(porsche_911).
+
 suv(bmw_x5).
+suv(tesla_cybertruck).
+suv(ford_f150).
 
-% Малки коли
 compact(honda_civic).
+compact(tesla_model_3).
+
+% Цени (в хиляди долари)
+car_price(tesla_model_s, 90).
+car_price(tesla_model_3, 35).
+car_price(tesla_cybertruck, 60).
+car_price(ford_mustang, 55).
+car_price(ford_f150, 45).
+car_price(bmw_x5, 75).
+car_price(bmw_i8, 150).
+car_price(lamborghini_huracan, 250).
+car_price(lamborghini_aventador, 400).
+car_price(honda_civic, 25).
+car_price(mercedes_s_class, 120).
+car_price(audi_r8, 180).
+car_price(porsche_911, 110).
+
+% Мощност (к.с.)
+car_power(tesla_model_s, 1020).
+car_power(tesla_model_3, 450).
+car_power(tesla_cybertruck, 800).
+car_power(ford_mustang, 460).
+car_power(ford_f150, 400).
+car_power(bmw_x5, 523).
+car_power(bmw_i8, 369).
+car_power(lamborghini_huracan, 630).
+car_power(lamborghini_aventador, 730).
+car_power(honda_civic, 180).
+car_power(mercedes_s_class, 429).
+car_power(audi_r8, 562).
+car_power(porsche_911, 379).
 
 % Правила
 is_electric(X) :- electric(X).
 is_sports(X) :- sports(X).
+is_luxury(X) :- luxury(X).
 is_suv(X) :- suv(X).
 is_compact(X) :- compact(X).
 is_car(X) :- car(X).
+
+% Сложни правила
+is_expensive(X) :- car_price(X, Price), Price > 100.
+is_powerful(X) :- car_power(X, Power), Power > 500.
+is_affordable(X) :- car_price(X, Price), Price < 50.
+is_fast_electric(X) :- electric(X), car_power(X, Power), Power > 400.
     `;
+
+    // Данни за автомобилите
+    const carData = {
+      tesla_model_s: {
+        name: 'Tesla Model S',
+        type: 'Електрически седан',
+        image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=300&h=200&fit=crop',
+        specs: { power: '1020 к.с.', price: '$90,000', range: '652 км' }
+      },
+      tesla_model_3: {
+        name: 'Tesla Model 3',
+        type: 'Компактен електрически',
+        image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=300&h=200&fit=crop',
+        specs: { power: '450 к.с.', price: '$35,000', range: '448 км' }
+      },
+      tesla_cybertruck: {
+        name: 'Tesla Cybertruck',
+        type: 'Електрически SUV',
+        image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=300&h=200&fit=crop',
+        specs: { power: '800 к.с.', price: '$60,000', range: '547 км' }
+      },
+      ford_mustang: {
+        name: 'Ford Mustang',
+        type: 'Спортен автомобил',
+        image: 'https://images.unsplash.com/photo-1494905998402-395d579af36f?w=300&h=200&fit=crop',
+        specs: { power: '460 к.с.', price: '$55,000', speed: '250 км/ч' }
+      },
+      ford_f150: {
+        name: 'Ford F-150',
+        type: 'Пикап',
+        image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop',
+        specs: { power: '400 к.с.', price: '$45,000', towing: '5.4 т' }
+      },
+      bmw_x5: {
+        name: 'BMW X5',
+        type: 'Луксозен SUV',
+        image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop',
+        specs: { power: '523 к.с.', price: '$75,000', speed: '250 км/ч' }
+      },
+      bmw_i8: {
+        name: 'BMW i8',
+        type: 'Хибриден спортен',
+        image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop',
+        specs: { power: '369 к.с.', price: '$150,000', speed: '250 км/ч' }
+      },
+      lamborghini_huracan: {
+        name: 'Lamborghini Huracán',
+        type: 'Суперкар',
+        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=300&h=200&fit=crop',
+        specs: { power: '630 к.с.', price: '$250,000', speed: '325 км/ч' }
+      },
+      lamborghini_aventador: {
+        name: 'Lamborghini Aventador',
+        type: 'Суперкар',
+        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=300&h=200&fit=crop',
+        specs: { power: '730 к.с.', price: '$400,000', speed: '350 км/ч' }
+      },
+      honda_civic: {
+        name: 'Honda Civic',
+        type: 'Компактен автомобил',
+        image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=300&h=200&fit=crop',
+        specs: { power: '180 к.с.', price: '$25,000', mpg: '7.8л/100км' }
+      },
+      mercedes_s_class: {
+        name: 'Mercedes S-Class',
+        type: 'Луксозен седан',
+        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=300&h=200&fit=crop',
+        specs: { power: '429 к.с.', price: '$120,000', comfort: '5★' }
+      },
+      audi_r8: {
+        name: 'Audi R8',
+        type: 'Суперкар',
+        image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=200&fit=crop',
+        specs: { power: '562 к.с.', price: '$180,000', speed: '330 км/ч' }
+      },
+      porsche_911: {
+        name: 'Porsche 911',
+        type: 'Спортен автомобил',
+        image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=300&h=200&fit=crop',
+        specs: { power: '379 к.с.', price: '$110,000', speed: '293 км/ч' }
+      }
+    };
 
     session.consult(knowledge);
 
-    const animalAnimations = {
-      tesla_model_s: '<img src="https://media.giphy.com/media/l0MYNVD2sY6zWZrCw/giphy.gif" class="animal-gif" alt="Tesla Model S" />',
-      ford_mustang: '<img src="https://media.giphy.com/media/WTdLdb07TZfSE/giphy.gif" class="animal-gif" alt="Ford Mustang" />',
-      bmw_x5: '<img src="https://media.giphy.com/media/l3vR6aasfsdyBz0rG/giphy.gif" class="animal-gif" alt="BMW X5" />',
-      lamborghini_huracan: '<img src="https://media.giphy.com/media/3o7btZ7JABTjjA8pHi/giphy.gif" class="animal-gif" alt="Lamborghini Huracan" />',
-      honda_civic: '<img src="https://media.giphy.com/media/3og0IFrHkIglEOg8Ba/giphy.gif" class="animal-gif" alt="Honda Civic" />'
-    };
+    // Показване на базата знания
+    document.getElementById('knowledge-base-content').textContent = knowledge;
+
+    function setQuery(query) {
+      document.getElementById('prolog-input').value = query;
+    }
+
+    function toggleKnowledgeBase() {
+      const content = document.getElementById('knowledge-base-content');
+      content.classList.toggle('hidden');
+    }
+
+    function displayCar(carName) {
+      const carDisplay = document.getElementById('car-display');
+      const car = carData[carName];
+      
+      if (!car) {
+        carDisplay.innerHTML = `
+          <div class="car-card active">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">❓</div>
+            <h3 class="car-name">${carName}</h3>
+            <div class="car-type">Неизвестен автомобил</div>
+            <p>Няма данни за този автомобил</p>
+          </div>
+        `;
+        return;
+      }
+
+      const specs = Object.entries(car.specs);
+      const specsHtml = specs.map(([key, value]) => `
+        <div class="spec-item">
+          <div class="spec-value">${value}</div>
+          <div class="spec-label">${key}</div>
+        </div>
+      `).join('');
+
+      carDisplay.innerHTML = `
+        <div class="car-card active">
+          <img src="${car.image}" alt="${car.name}" class="car-image" />
+          <h3 class="car-name">${car.name}</h3>
+          <div class="car-type">${car.type}</div>
+          <div class="car-specs">
+            ${specsHtml}
+          </div>
+        </div>
+      `;
+    }
 
     function runProlog() {
-      const input = document.getElementById("prolog-input").value;
+      const input = document.getElementById("prolog-input").value.trim();
       const resultDiv = document.getElementById("result");
-      const animDiv = document.getElementById("animal-animation");
+      const carDisplay = document.getElementById("car-display");
 
-      resultDiv.innerHTML = "";
-      animDiv.innerHTML = "";
+      if (!input) {
+        resultDiv.innerHTML = '<div class="result-item error"><div class="result-text">Моля, въведете заявка</div></div>';
+        return;
+      }
 
-      session.query(input);
-      session.answers(answer => {
-        if(answer === false) {
-          resultDiv.innerHTML += `<p>Няма повече резултати.</p>`;
-          return;
-        }
-        const str = pl.format_answer(answer);
-        if (str === "false.") {
-          resultDiv.innerHTML = "<p>Няма резултати за тази заявка.</p>";
-          return;
-        }
-        resultDiv.innerHTML += `<p>${str}</p>`;
+      resultDiv.innerHTML = '';
+      let hasResults = false;
+      let firstCar = null;
 
-        const match = str.match(/X = (\w+)/);
-        if (match) {
-          const car = match[1];
-          if (animalAnimations[car]) {
-            animDiv.innerHTML = animalAnimations[car];
-          } else {
-            animDiv.innerHTML = "<p>Няма GIF за този автомобил.</p>";
+      try {
+        session.query(input);
+        session.answers(answer => {
+          if (answer === false) {
+            if (!hasResults) {
+              resultDiv.innerHTML = '<div class="result-item error"><div class="result-text">Няма резултати за тази заявка</div></div>';
+            }
+            return;
           }
-        }
-      });
+
+          hasResults = true;
+          const str = session.format_answer(answer);
+          
+          if (str && str !== "false.") {
+            resultDiv.innerHTML += `<div class="result-item"><div class="result-text">${str}</div></div>`;
+            
+            // Извличане на името на автомобила
+            const match = str.match(/X = (\w+)/);
+            if (match && !firstCar) {
+              firstCar = match[1];
+              displayCar(firstCar);
+            }
+          }
+        });
+      } catch (error) {
+        resultDiv.innerHTML = `<div class="result-item error"><div class="result-text">Грешка: ${error.message}</div></div>`;
+      }
     }
+
+    // Автоматично изпълнение на първоначална заявка
+    setTimeout(() => {
+      runProlog();
+    }, 1000);
   </script>
-</body>
-</html>

@@ -494,9 +494,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tau-prolog/0.3.2/tau-prolog.min.js"></script>
   <script>
+    // Initialize Prolog session
     const session = pl.create();
-
-    // Разширена база знания
+    
+    // Define the knowledge base
     const knowledge = `
 % Автомобили
 car(tesla_model_s).
@@ -584,9 +585,9 @@ is_expensive(X) :- car_price(X, Price), Price > 100.
 is_powerful(X) :- car_power(X, Power), Power > 500.
 is_affordable(X) :- car_price(X, Price), Price < 50.
 is_fast_electric(X) :- electric(X), car_power(X, Power), Power > 400.
-    `;
+`;
 
-    // Данни за автомобилите
+    // Car data for visualization
     const carData = {
       tesla_model_s: {
         name: 'Tesla Model S',
@@ -668,11 +669,11 @@ is_fast_electric(X) :- electric(X), car_power(X, Power), Power > 400.
       }
     };
 
+    // Initialize the knowledge base
     session.consult(knowledge);
-
-    // Показване на базата знания
     document.getElementById('knowledge-base-content').textContent = knowledge;
 
+    // Helper functions
     function setQuery(query) {
       document.getElementById('prolog-input').value = query;
     }
@@ -748,7 +749,7 @@ is_fast_electric(X) :- electric(X), car_power(X, Power), Power > 400.
           if (str && str !== "false.") {
             resultDiv.innerHTML += `<div class="result-item"><div class="result-text">${str}</div></div>`;
             
-            // Извличане на името на автомобила
+            // Extract car name from the result
             const match = str.match(/X = (\w+)/);
             if (match && !firstCar) {
               firstCar = match[1];
@@ -761,8 +762,10 @@ is_fast_electric(X) :- electric(X), car_power(X, Power), Power > 400.
       }
     }
 
-    // Автоматично изпълнение на първоначална заявка
+    // Run initial query on page load
     setTimeout(() => {
       runProlog();
     }, 1000);
   </script>
+</body>
+</html>

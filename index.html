@@ -1,96 +1,126 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Prolog Car Intelligence</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f0f4f8; color: #333; }
-    .container { max-width: 1200px; margin: auto; padding: 20px; }
-    h1 { text-align: center; margin-bottom: 1rem; color: #4f46e5; }
-    .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .query-panel, .results-panel { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    textarea { width: 100%; height: 100px; font-family: monospace; font-size: 16px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
-    .execute-btn { margin-top: 10px; width: 100%; padding: 12px; font-size: 16px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .execute-btn:hover { background: #4f46e5; }
-    .results-container { margin-top: 20px; }
-    .result-item { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-    .example-query { display: inline-block; margin: 5px; padding: 5px 10px; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-family: monospace; }
-    .example-query:hover { background: #cbd5e1; }
-    .gallery { margin-top: 40px; }
-    .gallery h2 { text-align: center; margin-bottom: 20px; color: #4f46e5; }
-    .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-    .image-grid img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f4f8;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #4f46e5;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .query-panel,
+    .results-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-family: monospace;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .execute-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .execute-btn:hover {
+      background: #4f46e5;
+    }
+
+    .results-container {
+      margin-top: 20px;
+    }
+
+    .result-item {
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .example-query {
+      display: inline-block;
+      margin: 5px;
+      padding: 5px 10px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: monospace;
+    }
+
+    .example-query:hover {
+      background: #cbd5e1;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Gallery Styles */
+    .gallery {
+      margin-top: 40px;
+    }
+
+    .gallery h2 {
+      text-align: center;
+      color: #4f46e5;
+      margin-bottom: 20px;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .image-grid img {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      object-fit: cover;
+      height: 180px;
+    }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>🚗 Prolog Car Intelligence</h1>
-    <p style="text-align:center">Интелигентна база данни за автомобили с Prolog логика</p>
+<body
 
-    <div class="main-content">
-      <div class="query-panel">
-        <h2>Prolog Заявки</h2>
-        <div class="query-examples">
-          <strong>Примерни заявки:</strong>
-          <div>
-            <span class="example-query" onclick="setQuery('is_electric(X).')">is_electric(X).</span>
-            <span class="example-query" onclick="setQuery('has_type(X, suv).')">has_type(X, suv).</span>
-            <span class="example-query" onclick="setQuery('has_range(X, R), R > 300.')">has_range(X, R), R > 300.</span>
-          </div>
-        </div>
-        <textarea id="query" placeholder="Въведи Prolog заявка..."></textarea>
-        <button class="execute-btn" onclick="executeQuery()">Изпълни</button>
-      </div>
-      
-      <div class="results-panel">
-        <h2>Резултати</h2>
-        <div id="results" class="results-container"></div>
-      </div>
-    </div>
-
-    <div class="gallery">
-      <h2>Галерия с автомобили</h2>
-      <div class="image-grid">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_Model_S_Plaid_IMG_0034.jpg/640px-Tesla_Model_S_Plaid_IMG_0034.jpg" alt="Tesla Model S">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Nissan_Leaf_2018.jpg/640px-Nissan_Leaf_2018.jpg" alt="Nissan Leaf">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Audi_Q4_e-tron_IMG_5147.jpg/640px-Audi_Q4_e-tron_IMG_5147.jpg" alt="Audi Q4 e-tron">
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function setQuery(query) {
-      document.getElementById('query').value = query;
-    }
-
-    function executeQuery() {
-      const query = document.getElementById('query').value.trim();
-      const resultsContainer = document.getElementById('results');
-      resultsContainer.innerHTML = '';
-
-      if (!query) {
-        resultsContainer.innerHTML = '<div class="result-item">Моля, въведи заявка.</div>';
-        return;
-      }
-
-      // Simulate Prolog response
-      setTimeout(() => {
-        const fakeResults = [
-          `Резултат за заявка: ${query}`,
-          'X = tesla_model_s',
-          'X = nissan_leaf'
-        ];
-
-        fakeResults.forEach(res => {
-          const el = document.createElement('div');
-          el.className = 'result-item';
-          el.textContent = res;
-          resultsContainer.appendChild(el);
-        });
-      }, 500);
-    }
-  </script>
-</body>
-</html>

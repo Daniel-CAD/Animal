@@ -1,82 +1,134 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prolog Car Intelligence</title>
+  <meta charset="UTF-8" />
+  <title>Prolog Автомобили</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f0f4f8; color: #333; }
-    .container { max-width: 1200px; margin: auto; padding: 20px; }
-    h1 { text-align: center; margin-bottom: 1rem; color: #4f46e5; }
-    .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .query-panel, .results-panel { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    textarea { width: 100%; height: 100px; font-family: monospace; font-size: 16px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
-    .execute-btn { margin-top: 10px; width: 100%; padding: 12px; font-size: 16px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .execute-btn:hover { background: #4f46e5; }
-    .results-container { margin-top: 20px; }
-    .result-item { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-    .example-query { display: inline-block; margin: 5px; padding: 5px 10px; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-family: monospace; }
-    .example-query:hover { background: #cbd5e1; }
-    @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef4ff;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-family: monospace;
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 2px solid #005f99;
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 10px;
+      background-color: #005f99;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004273;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .car-gif {
+      margin-top: 20px;
+      max-width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #aaa;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚗 Prolog Car Intelligence</h1>
-    <p style="text-align:center">Интелигентна база данни за автомобили с Prolog логика</p>
+  <h1>Prolog Автомобили</h1>
 
-    <div class="main-content">
-      <div class="query-panel">
-        <h2>Prolog Заявки</h2>
-        <div class="query-examples">
-          <strong>Примерни заявки:</strong>
-          <div>
-            <span class="example-query" onclick="setQuery('is_electric(X).')">is_electric(X).</span>
-            <span class="example-query" onclick="setQuery('has_type(X, suv).')">has_type(X, suv).</span>
-            <span class="example-query" onclick="setQuery('has_range(X, R), R > 300.')">has_range(X, R), R > 300.</span>
-          </div>
-        </div>
-        <textarea id="query" placeholder="Въведи Prolog заявка..."></textarea>
-        <button class="execute-btn" onclick="executeQuery()">Изпълни</button>
-      </div>
-      
-      <div class="results-panel">
-        <h2>Резултати</h2>
-        <div id="results" class="results-container"></div>
-      </div>
-    </div>
-  </div>
+  <p>Въведете заявка, напр.: <code>is_sports(X).</code></p>
+  <textarea id="prolog-input">is_sports(X).</textarea><br />
+  <button onclick="runProlog()">Изпълни заявка</button>
 
+  <div id="result"></div>
+  <div id="car-animation"></div>
+
+  <script src="https://unpkg.com/tau-prolog"></script>
   <script>
-    function setQuery(query) {
-      document.getElementById('query').value = query;
-    }
+    const session = pl.create();
 
-    function executeQuery() {
-      const query = document.getElementById('query').value.trim();
-      const resultsContainer = document.getElementById('results');
-      resultsContainer.innerHTML = '';
+    const knowledge = `
+% Автомобили
+sports(ferrari).
+sports(porsche).
+sports(mustang).
 
-      if (!query) {
-        resultsContainer.innerHTML = '<div class="result-item">Моля, въведи заявка.</div>';
-        return;
-      }
+electric(tesla_model_s).
+electric(nissan_leaf).
 
-      // Simulate Prolog response (you should replace this with real backend interaction)
-      setTimeout(() => {
-        const fakeResults = [
-          `Резултат за заявка: ${query}`,
-          'X = tesla_model_s',
-          'X = nissan_leaf'
-        ];
+luxury(bmw_7_series).
+luxury(audi_a8).
 
-        fakeResults.forEach(res => {
-          const el = document.createElement('div');
-          el.className = 'result-item';
-          el.textContent = res;
-          resultsContainer.appendChild(el);
+suv(toyota_rav4).
+suv(jeep_cherokee).
+
+% Правила
+is_sports(X) :- sports(X).
+is_electric(X) :- electric(X).
+is_luxury(X) :- luxury(X).
+is_suv(X) :- suv(X).
+`;
+
+    session.consult(knowledge);
+
+    const carAnimations = {
+      ferrari: '<img src="https://media.giphy.com/media/3oz8xLd9DJq2l2VFtu/giphy.gif" class="car-gif" alt="Ferrari" />',
+      porsche: '<img src="https://media.giphy.com/media/3oEduV4SOS9mmmIOkw/giphy.gif" class="car-gif" alt="Porsche" />',
+      mustang: '<img src="https://media.giphy.com/media/kGpL7bqYxKBi0/giphy.gif" class="car-gif" alt="Mustang" />',
+      tesla_model_s: '<img src="https://media.giphy.com/media/3ohs4l0I7NAk3AYy2w/giphy.gif" class="car-gif" alt="Tesla" />',
+      nissan_leaf: '<img src="https://media.giphy.com/media/l41lT2EwhVq5mE2uI/giphy.gif" class="car-gif" alt="Leaf" />',
+      bmw_7_series: '<img src="https://media.giphy.com/media/xUOxeZ1fPWVltntugo/giphy.gif" class="car-gif" alt="BMW" />',
+      audi_a8: '<img src="https://media.giphy.com/media/3o7btQ7b8s8u6R1GUE/giphy.gif" class="car-gif" alt="Audi" />',
+      toyota_rav4: '<img src="https://media.giphy.com/media/3ov9jZTRQKK7c7xJMQ/giphy.gif" class="car-gif" alt="RAV4" />',
+      jeep_cherokee: '<img src="https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif" class="car-gif" alt="Cherokee" />'
+    };
+
+    function runProlog() {
+      const input = document.getElementById("prolog-input").value.trim();
+      const resultDiv = document.getElementById("result");
+      const animDiv = document.getElementById("car-animation");
+
+      resultDiv.innerHTML = "";
+      animDiv.innerHTML = "";
+
+      try {
+        session.query(input);
+
+        session.answers(answer => {
+          if (answer === false) {
+            resultDiv.innerHTML = "<p>Няма резултати.</p>";
+            return;
+          }
+
+          const formatted = pl.format_answer(answer);
+          resultDiv.innerHTML += `<p>${formatted}</p>`;
+
+          const match = formatted.match(/X = (\w+)/);
+          if (match) {
+            const car = match[1];
+            animDiv.innerHTML = carAnimations[car] || "<p>Няма анимация за този автомобил.</p>";
+          }
         });
-      }, 500);
+      } catch (err) {
+        resultDiv.innerHTML = `<p style="color:red;">Грешка: ${err.message}</p>`;
+      }
     }
   </script>
 </body>

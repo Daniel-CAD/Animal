@@ -17,6 +17,10 @@
     .result-item { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
     .example-query { display: inline-block; margin: 5px; padding: 5px 10px; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-family: monospace; }
     .example-query:hover { background: #cbd5e1; }
+    .gallery { margin-top: 40px; }
+    .gallery h2 { text-align: center; margin-bottom: 20px; color: #4f46e5; }
+    .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    .image-grid img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -45,6 +49,15 @@
         <div id="results" class="results-container"></div>
       </div>
     </div>
+
+    <div class="gallery">
+      <h2>Галерия с автомобили</h2>
+      <div class="image-grid">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_Model_S_Plaid_IMG_0034.jpg/640px-Tesla_Model_S_Plaid_IMG_0034.jpg" alt="Tesla Model S">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Nissan_Leaf_2018.jpg/640px-Nissan_Leaf_2018.jpg" alt="Nissan Leaf">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Audi_Q4_e-tron_IMG_5147.jpg/640px-Audi_Q4_e-tron_IMG_5147.jpg" alt="Audi Q4 e-tron">
+      </div>
+    </div>
   </div>
 
   <script>
@@ -62,7 +75,7 @@
         return;
       }
 
-      // Simulate Prolog response (you should replace this with real backend interaction)
+      // Simulate Prolog response
       setTimeout(() => {
         const fakeResults = [
           `Резултат за заявка: ${query}`,
